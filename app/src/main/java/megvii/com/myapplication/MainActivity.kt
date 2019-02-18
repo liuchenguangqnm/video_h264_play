@@ -19,9 +19,9 @@ class MainActivity : AppCompatActivity() {
     // 本地h264格式文件临时变量
     // private val h264Path = "/mnt/sdcard/test.h264"
     // private val h264Path = "/mnt/sdcard/720pq.h264"
-    private val h264Path = "/mnt/sdcard/3min_1080p.h264"
+    // private val h264Path = "/mnt/sdcard/3min_1080p.h264"
     // private val h264Path = "/mnt/sdcard/1080p.h264"
-    // private val h264Path = "/mnt/sdcard/video_file.h264"
+    private val h264Path = "/mnt/sdcard/video_file.h264"
     // 硬解码工具类
     var hardMediaDecodeUtil: HardMediaDecodeUtil? = null
 

@@ -10,7 +10,6 @@ import android.support.v4.content.ContextCompat
 import android.os.Build
 import android.view.WindowManager
 import android.widget.Toast
-import megvii.com.myapplication.sunUi.SunUiUtil.fixLayout
 
 
 class MainActivity : AppCompatActivity() {
@@ -27,7 +26,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        fixLayout(this)
         setContentView(R.layout.activity_main)
         // 屏幕常亮
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);

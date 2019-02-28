@@ -1,10 +1,14 @@
 package megvii.com.myapplication
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.media.MediaCodec
 import android.media.MediaCodecInfo
 import android.media.MediaFormat
 import android.os.*
+import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.view.SurfaceHolder
 import android.view.SurfaceView
 import android.view.ViewGroup
 import java.io.File
@@ -67,7 +71,38 @@ class HardMediaDecodeUtil(h264Path: String, surfaceView: SurfaceView, isResume: 
     }
 
     init {
-        initSurfaceConfig()
+        surfaceView.holder.addCallback(object : SurfaceHolder.Callback {
+            override fun surfaceChanged(p0: SurfaceHolder?, p1: Int, p2: Int, p3: Int) {
+
+            }
+
+            override fun surfaceDestroyed(p0: SurfaceHolder?) {
+                resolveMediaDecoder()
+            }
+
+            override fun surfaceCreated(p0: SurfaceHolder?) {
+                val permissionExternalR = ContextCompat.checkSelfPermission(
+                    MyApplication.instance, Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+                val permissionExternalW = ContextCompat.checkSelfPermission(
+                    MyApplication.instance, Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+                if (permissionExternalR && permissionExternalW) {
+                    initSurfaceConfig()
+                }
+            }
+        })
+        if (surfaceView.width != 0) { // 宽高可以直接获取，说明加载完成，可以播放
+            val permissionExternalR = ContextCompat.checkSelfPermission(
+                MyApplication.instance, Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+            val permissionExternalW = ContextCompat.checkSelfPermission(
+                MyApplication.instance, Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+            if (permissionExternalR && permissionExternalW) {
+                initSurfaceConfig()
+            }
+        }
     }
 
     private fun initSurfaceConfig() {
@@ -88,7 +123,7 @@ class HardMediaDecodeUtil(h264Path: String, surfaceView: SurfaceView, isResume: 
         }
     }
 
-    fun startPlay() {
+    private fun startPlay() {
         isNeedContinuePlay = true  // 开始持续解码播放
         isFileReadFinished = false // 文件未读取完成
         readFileThread = ReadFileThread()
@@ -99,14 +134,18 @@ class HardMediaDecodeUtil(h264Path: String, surfaceView: SurfaceView, isResume: 
         (showFrameThread as ShowFrameThread).start()
     }
 
-    fun resolveMediaDecoder() {
-        // 文件解码停止
-        isNeedContinuePlay = false
-        if (mediaCodec != null) {
-            // 停止解码，此时可以再次调用configure()方法
-            mediaCodec.stop()
-            // 释放内存
-            mediaCodec.release()
+    private fun resolveMediaDecoder() {
+        try {
+            // 文件解码停止
+            isNeedContinuePlay = false
+            if (mediaCodec != null) {
+                // 停止解码，此时可以再次调用configure()方法
+                mediaCodec.stop()
+                // 释放内存
+                mediaCodec.release()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 
@@ -350,7 +389,7 @@ class HardMediaDecodeUtil(h264Path: String, surfaceView: SurfaceView, isResume: 
 
 
     /**
-     * 修正视频宽高相关逻辑
+     * ================================================== 修正视频宽高相关逻辑 ==================================================
      */
     // 获取视频宽高以缩放渲染分辨率
     private fun fixHW(mediaFormatStr: String, surfaceView: SurfaceView) {

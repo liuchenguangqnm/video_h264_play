@@ -302,7 +302,7 @@ class HardMediaDecodeUtil(h264Path: String, surfaceView: SurfaceView, isResume: 
      */
     private fun showFrameData() {
         while (isNeedContinuePlay) {
-            // MediaCodec帧数据出列，先将帧数据信息放入已经准备好的MediaCodec.BufferInfo对象中（参数2为延迟时间，设置为10秒（播放本地文件的延迟时间））
+            // MediaCodec帧数据出列，先将帧数据信息放入已经准备好的MediaCodec.BufferInfo对象中（参数2为获取有效数据的延迟时间，-1为一直等待）
             var outputBufferIndex =
                 mediaCodec.dequeueOutputBuffer(bufferInfo, -1)    // 从这里拿到哪一个index所属的outputBuffer是可用的，负数就是没有
             Log.i("haha", "$outputBufferIndex")

@@ -10,6 +10,7 @@ import android.support.v4.content.ContextCompat
 import android.util.Log
 import android.view.SurfaceHolder
 import android.view.SurfaceView
+import android.view.View
 import android.view.ViewGroup
 import java.io.File
 import java.io.FileInputStream
@@ -92,17 +93,7 @@ class HardMediaDecodeUtil(h264Path: String, surfaceView: SurfaceView, isResume: 
                 }
             }
         })
-        if (surfaceView.width != 0) { // 宽高可以直接获取，说明加载完成，可以播放
-            val permissionExternalR = ContextCompat.checkSelfPermission(
-                MyApplication.instance, Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
-            val permissionExternalW = ContextCompat.checkSelfPermission(
-                MyApplication.instance, Manifest.permission.WRITE_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED
-            if (permissionExternalR && permissionExternalW) {
-                initSurfaceConfig()
-            }
-        }
+        surfaceView.visibility = View.VISIBLE
     }
 
     private fun initSurfaceConfig() {
